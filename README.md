@@ -35,6 +35,10 @@ Temperature sensors can be miscalibrated or malfunctioning (completely blank). S
  - ```pdsh -a 'hplog -t | grep -- "---" | wc -l'```
 - Temperatures should be consistent
  -  ```pdsh -a 'hplog -t' | sort -k 8 -n | tail -n 10'```
+
+### Processors
+Processors typically do not have major issues but it's good to run a proper burn-in test.
+ - [HPL (High-Performance Linpack)](http://www.netlib.org/benchmark/hpl/) on each node
  
 ### Disks
 Disks may have performance problems as well as degradation. Luckily the disks have self-tests and counters to find these out. The counters also can expose if you are being sold a used disk as new :)
@@ -72,7 +76,7 @@ Differences in memory size are indicative of problems with DIMMs. In some cases 
 
 - Total amount of memory
  - ```pdsh -a 'cat /proc/meminfo | grep MemTotal'```
-- Memory benchmark (STREAM2 TRIAD on all cores)  
+- [STREAM2 TRIAD](https://www.cs.virginia.edu/stream/stream2/) on each node 
 
 ### Ethernet
 Network cards have their own firmware which often is not upgraded if the card is changed. Errors or wrong line rates can indicate failed cables or interfaces.
@@ -101,7 +105,7 @@ Network cards have their own firmware which often is not upgraded if the card is
  - ```pdsh -a 'cat /sys/class/net/ib0/statistics/tx_errors'``` 
  - ```pdsh -a 'cat /sys/class/net/ib0/statistics/rx_errors'``` 
 - Firmware version of switches
-- MPI connectivity benchmark 
+- mpisweep MPI connectivity benchmark (To be published shortly)
 
 ### BIOS
 Inconsistent BIOS settings and versions tend to be quite common. There are some differences in the lspci, lsusb and dmidecode output (for example serial numbers) but major discrepancies such as different line counts are indicative of possibly mainboard problems or missing components such as DIMMs (which should also show up in the memory size checks).
