@@ -40,12 +40,15 @@ Disks may have performance problems as well as degradation. Luckily the disks ha
 - Elements in the grown defect list
  - ```pdsh -a 'smartctl -d scsi --all /dev/sda|egrep "Elements in grown defect list"' | sort -n -k 7```
 - Elements in reallocated sector count
- - HP Apollo 6k: ```pdsh -a 'smartctl --attributes -d cciss,0 /dev/sda' | grep Reallocated_Sector_Ct | sort -n -k 11```
+ - ```pdsh -a 'smartctl --attributes -d cciss,0 /dev/sda' | grep Reallocated_Sector_Ct | sort -n -k 11```
 - Short self test 
- - HP Apollo 6k: ```pdsh -a 'smartctl -t short -d cciss,0 /dev/sda'```
+ - ```pdsh -a 'smartctl -t short -d cciss,0 /dev/sda'```
 - Geometry of disks
  - ```pdsh -a 'hdparm /dev/sda|grep geometry'```
 - Operational hours and number of reboots
+ - ```pdsh -a 'smartctl -a /dev/sda |grep Power_Cycle_Count'```
+ - ```pdsh -a 'smartctl -a /dev/sda |grep Power_On_Hours'```
+
 - Disk firmware version
 - RAID controller firmware version 
 
@@ -59,7 +62,7 @@ The management processor logs are a useful place to discover pre-existing issues
  - ```pdsh -a 'ipmitool sel list'```
 - Time correct
  - ```pdsh -a 'ipmitool sel time get'```
-- Any new messages in the first week of operation? 
+- Any new log messages in the first week of operation? 
 
 ### Memory
 Differences in memory size are indicative of problems with DIMMs. In some cases even complete DIMMs may be missing or are the wrong size.
@@ -98,16 +101,21 @@ Network cards have their own firmware which often is not upgraded if the card is
 - MPI connectivity benchmark 
 
 ### BIOS
-
+Inconsistent BIOS settings and versions tend to be quite common. There are some differences in the lspci, lsusb and dmidecode output (for example serial numbers) but major discrepancies such as different line counts are indicative of possibly mainboard problems or missing components such as DIMMs (which should also show up in the memory size checks).
 
 - BIOS version
  - ```pdsh -a 'dmesg | grep DMI:'```
 - Output length of dmidecode
  - ```pdsh -a 'dmidecode | wc -l'```
 - BIOS settings
- 
+- PCI device report length
+ - ```pdsh -a 'lspci -v |wc -l'``` 
+- USB device report length
+ - ```pdsh -a 'lsusb -v |wc -l'``` 
 
 ### OS -level
+There are some things that should be checked on the OS side. Although the kernel version and rpm count does not indicate harware issues, such OS-level discrepancies may affect the reports provided by the other commands. Incorrect date may be an issue with the clock if NTP sync is enabled. 
+
 - dmesg log length after a boot of the whole system and after idling the cluster for at least 3 hours
  - ```pdsh -a 'dmesg|wc -l' | sort -k 2 -n```
 - Clocks synchronized
