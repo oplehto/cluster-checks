@@ -2,9 +2,9 @@
 A collection of checks for cluster homogenity. I'll do some fancy checks at some point but right now it's in a checklist form with some examples (right now only for HP clusters).
 
 ## Background
-In order to ensure the hassle-free of a cluster, it's important that the baseline system is in a very consistent shape. This means that the nodes are identical as possible. Oftentimes however, there are some inconsistencies which may have been missed in the factory integration tests. Sometimes the issues may not cause imminent errors but may cause trouble down the line. Thus it will be very important to weed these out as soon as possible. 
+In order to ensure the hassle-free of a cluster, it's important that the baseline system is in a very consistent shape. This means that the nodes are identical as possible. Oftentimes there are some inconsistencies which may have been missed in the factory integration tests. Sometimes the issues may not cause imminent errors but may cause trouble down the line. Thus it will be very important to weed these out as soon as possible. During my years as managing HPC clusters I've become quite good at catching these and thought it would be good to share the knowledge. 
 
-Sites buying clusters should always have a clause in their acceptance testing conditions that the compute nodes must have consistent configuration and have a similar checklist to verify this. However, it should not be only limited to prescribed checklist items as new sources of inconsistency may be discovered. For example the list below is the result of a large number of procurement and acceptance tests on thousands of compute nodes from a variety of vendors. 
+Sites buying clusters should always demand in their contracts that cluster nodes must have consistent configuration and have a checklist to verify this. However, testing should not be only limited to prescribed checklist items as new sources of inconsistency may be discovered. Use your creativity. :)
 
 I also would be very happy if any vendor reading this would pass it on to their test teams. 
 ## Test checklist 
