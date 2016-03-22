@@ -10,6 +10,8 @@ I also would be very happy if any vendor reading this would pass it on to their 
 ## Test checklist 
 The checklist is divided into categories and examples given. They are currently very HP-specific but there should be similar commands on other vendors' hardware. Any feedback and improvements are very welcome. 
 
+The example commands assume that you have pdsh installed (https://computing.llnl.gov/linux/pdsh.html) and the cluster hosts defined in the pdsh host list. 
+
 The scripts assume that pdsh is used to gather the information. The commands typically provide fairly large dumps of data. It's left to the task of the reader to pipe the output to a sort command or do diffs to evaluate the consistency. In many cases a simple `sort`, `grep` or `wc -l` is already useful but, for example in parsing `dmidecode` and `dmesg` output doing `diff`s might be better. I'll try to get around to productizing this at some point as well.
 
 ### PDU
