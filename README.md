@@ -12,6 +12,7 @@ The checklist is divided into categories and examples given. They are currently 
 The scripts assume that pdsh is used to gather the information. The commands typically provide fairly large dumps of data. It's left to the task of the reader to pipe the output to a sort command or do diffs to evaluate the consistency. In many cases a simple `sort`, `grep` or `wc -l` is already useful but, for example in parsing `dmidecode` and `dmesg` output doing `diff`s might be better. I'll try to get around to productizing this at some point as well.
 
 ### PDU
+Even PDUs have firmware these days and this gets often overlooked updates or when replacing hardware. This may cause also weird discrepancies in power consumption or differences in the sensor reports.
 - Number of operational PDUs and their status
  - ```pdsh -a 'hplog -p'```
 - PDU power draw 
@@ -20,17 +21,20 @@ The scripts assume that pdsh is used to gather the information. The commands typ
  - ```pdsh -a '/shared/HP/ppic -d | grep Bootblock'```
 
 ### Fans
+Fans are one of the most commonly failing component. Sometimes a partial failure may also be indicated with a strange state or a RPM reading. 
 - Operational fans per node
  - ```pdsh -a 'hplog -f '```
 - RPMs of fans
 
 ### Temperature sensors
+Temperature sensors can be miscalibrated or malfunctioning (completely blank). Sometimes the non-homogeneous output is indicative of a different firmware version. 
 - Number of functional temperature sensors 
  - ```pdsh -a 'hplog -t | grep -- "---" | wc -l'```
 - Temperatures should be consistent
  -  ```pdsh -a 'hplog -t' | sort -k 8 -n | tail -n 10'```
  
 ### Disks
+Disks may have performance problems as well as degradation. Luckily the disks have self-tests and counters to find these out. The counters also can expose if you are being sold a used disk as new :)
 - Quick test of disk bandwidth
  - ```pdsh -a 'smartctl -d scsi --all /dev/sda|egrep "read:|write:"'```
 - Elements in the grown defect list
@@ -46,6 +50,7 @@ The scripts assume that pdsh is used to gather the information. The commands typ
 - RAID controller firmware version 
 
 ### Management processor
+The management processor logs are a useful place to discover pre-existing issues on the systems. It's also good to keep monitoring it during the initial operation of the system to see if there are any strange messages.
 - Firmware version
  -  ```pdsh -a 'ipmitool mc info | grep Firmware'```
 - Event log size
@@ -57,11 +62,15 @@ The scripts assume that pdsh is used to gather the information. The commands typ
 - Any new messages in the first week of operation? 
 
 ### Memory
+Differences in memory size are indicative of problems with DIMMs. In some cases even complete DIMMs may be missing or are the wrong size.
+
 - Total amount of memory
  - ```pdsh -a 'cat /proc/meminfo | grep MemTotal'```
 - Memory benchmark (STREAM2 TRIAD on all cores)  
 
 ### Ethernet
+Network cards have their own firmware which often is not upgraded if the card is changed. Errors or wrong line rates can indicate failed cables or interfaces.
+
 - Firmware version
  - ```pdsh -a 'ethtool -i eth0 | grep firmware'```
 - Errors or drops
@@ -74,6 +83,8 @@ The scripts assume that pdsh is used to gather the information. The commands typ
 - Firmware version of switches
 
 ### InfiniBand
+Network cards have their own firmware which often is not upgraded if the card is changed. Errors or wrong line rates can indicate failed cables or interfaces. InfiniBand cables can be very sensitive and can break in a way that drops the line rate. 
+
 - Firmware version of HCAs
  - ```pdsh -a 'ibstat | grep Firmware'```  
 - Line rate
@@ -87,16 +98,18 @@ The scripts assume that pdsh is used to gather the information. The commands typ
 - MPI connectivity benchmark 
 
 ### BIOS
+
+
 - BIOS version
  - ```pdsh -a 'dmesg | grep DMI:'```
 - Output length of dmidecode
  - ```pdsh -a 'dmidecode | wc -l'```
-- dmesg log length after a boot of the whole system and after idling the cluster for at least 3 hours
- - ```pdsh -a 'dmesg|wc -l' | sort -k 2 -n```
 - BIOS settings
  
 
 ### OS -level
+- dmesg log length after a boot of the whole system and after idling the cluster for at least 3 hours
+ - ```pdsh -a 'dmesg|wc -l' | sort -k 2 -n```
 - Clocks synchronized
  - ```pdsh -a 'date'```
 - RPM count
