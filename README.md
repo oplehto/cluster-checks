@@ -1,5 +1,6 @@
 # cluster-checks
-A collection of checks for cluster homogenity. I'll do some fancy checks at some point but right now it's in a checklist form.
+A collection of checks for cluster homogenity. I'll do some fancy checks at some point but right now it's in a checklist form with some examples (right now only for HP clusters).
+
 ## Background
 In order to ensure the hassle-free of a cluster, it's important that the baseline system is in a very consistent shape. This means that the nodes are identical as possible. Oftentimes however, there are some inconsistencies which may have been missed in the factory integration tests. Sometimes the issues may not cause imminent errors but may cause trouble down the line. Thus it will be very important to weed these out as soon as possible. 
 
