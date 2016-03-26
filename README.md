@@ -12,6 +12,8 @@ The checklist is divided into categories and examples given. They are currently 
 
 The example commands assume that you have pdsh installed (https://computing.llnl.gov/linux/pdsh.html) and the cluster hosts defined in the pdsh host list. 
 
+It is also possible to use dshbak / pshbak / dbuck to aggregate pdsh output (latter two from https://www.nsc.liu.se/~kent/python-hostlist/ )
+
 The scripts assume that pdsh is used to gather the information. The commands typically provide fairly large dumps of data. It's left to the task of the reader to pipe the output to a sort command or do diffs to evaluate the consistency. In many cases a simple `sort`, `grep` or `wc -l` is already useful but, for example in parsing `dmidecode` and `dmesg` output doing `diff`s might be better. I'll try to get around to productizing this at some point as well.
 
 ### PDU
@@ -36,10 +38,12 @@ Temperature sensors can be miscalibrated or malfunctioning (completely blank). S
 - Temperatures should be consistent
  -  ```pdsh -a 'hplog -t' | sort -k 8 -n | tail -n 10'```
 
-### Processors
-Processors typically do not have major issues but it's good to run a proper burn-in test.
+### Processors and system
+Processors typically do not have major issues but it's good to run a proper burn-in test. These can also expose some other low-level issues which the other tests might not find. 
  - [HPL (High-Performance Linpack)](http://www.netlib.org/benchmark/hpl/) on each node
+ - [NAS Parallel Benchmarks](http://www.nas.nasa.gov/publications/npb.html) 
  
+
 ### Disks
 Disks may have performance problems as well as degradation. Luckily the disks have self-tests and counters to find these out. The counters also can expose if you are being sold a used disk as new :)
 - Quick test of disk bandwidth
@@ -76,6 +80,8 @@ Differences in memory size are indicative of problems with DIMMs. In some cases 
 
 - Total amount of memory
  - ```pdsh -a 'cat /proc/meminfo | grep MemTotal'```
+- Differences in DIMMs
+ - ```dmidecode -t memory``` 
 - [STREAM2 TRIAD](https://www.cs.virginia.edu/stream/stream2/) on each node 
 
 ### Ethernet
@@ -115,10 +121,41 @@ Inconsistent BIOS settings and versions tend to be quite common. There are some 
 - Output length of dmidecode
  - ```pdsh -a 'dmidecode | wc -l'```
 - BIOS settings
+ - HP/HPE servers: ```conrep``` or ```hprcu``` 
 - PCI device report length
  - ```pdsh -a 'lspci -v |wc -l'``` 
 - USB device report length
  - ```pdsh -a 'lsusb -v |wc -l'``` 
+
+### GPUs
+These are some things that can be checked on GPUs. Examples are NVidia specific.
+- ECC Errors
+ - ```nvidia-smi -a --xml-format | grep -A 33 "<ecc_errors>" | grep "<total>" | grep -v "<total>0</total>"````
+- BIOS version
+ - ```nvidia-smi -a --xml-format | grep vbios_version```
+- Temperature sensors
+ - ```nvidia-smi -a --xml-format | grep "<gpu_temp>"```
+- ECC Mode 
+ - ```nvidia-smi -a --xml-format | grep "<current_ecc>"``` 
+- Power draw
+ - ```nvidia-smi -a --xml-format | grep "<power_draw>"```
+ 
+### Xeon Phi coprocessor card
+A lot of the checks of the other sections can be applied to every Xeon Phi card as well because they are essentially diskless Linux boxes. In addition there are some host side checks. 
+- The miccheck utility
+ - ```miccheck````
+- Coprocessor OS version
+ - ```micsmc -i | grep "Coprocessor OS Version"``` 
+- Flash version
+ - ```micsmc -i | grep "Flash Version"````
+- ECC status
+ - ```micsmc --ecc````
+- Total memory
+ - ```micsmc -m | grep Total````
+- Temperature sensors
+ - ```micsmc -t````
+- Power draw
+ - ```micsmc -f | grep "Total Power"``` 
 
 ### OS -level
 There are some things that should be checked on the OS side. Although the kernel version and rpm count does not indicate harware issues, such OS-level discrepancies may affect the reports provided by the other commands. Incorrect date may be an issue with the clock if NTP sync is enabled. 
