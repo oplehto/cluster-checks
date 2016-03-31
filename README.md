@@ -111,7 +111,7 @@ Network cards have their own firmware which often is not upgraded if the card is
  - ```pdsh -a 'cat /sys/class/net/ib0/statistics/tx_errors'``` 
  - ```pdsh -a 'cat /sys/class/net/ib0/statistics/rx_errors'``` 
 - Firmware version of switches
-- mpisweep MPI connectivity benchmark (To be published shortly)
+- [mpisweep](https://github.com/CSC-IT-Center-for-Science/mpisweep) MPI connectivity benchmark 
 
 ### BIOS
 Inconsistent BIOS settings and versions tend to be quite common. There are some differences in the lspci, lsusb and dmidecode output (for example serial numbers) but major discrepancies such as different line counts are indicative of possibly mainboard problems or missing components such as DIMMs (which should also show up in the memory size checks).
